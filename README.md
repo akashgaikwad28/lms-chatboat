@@ -1,6 +1,4 @@
 
-### 📘 `README.md`
-
 ```markdown
 # 🧠 LMS Chatbot with LangChain & Gemini
 
