@@ -1,0 +1,39 @@
+# 🌐 Environment & Package Managers
+.env
+env/
+.venv/
+__pycache__/
+*.py[cod]
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+*.lock
+python-packages/
+
+# 🧰 uv & Poetry
+.uv/
+uv.lock
+.poetry/
+
+# 📦 Package cache & virtualenv markers
+*.whl
+pip-wheel-metadata/
+
+# 🧪 Testing & logs
+*.log
+.coverage
+htmlcov/
+.cache/
+.pytest_cache/
+
+# 📚 IDE & Editor folders
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# 📄 Misc
+.DS_Store
+Thumbs.db
