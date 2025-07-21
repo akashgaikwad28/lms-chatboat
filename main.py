@@ -1,6 +1,7 @@
-def main():
-    print("Hello from lms-chat-boat!")
+from fastapi import FastAPI
 
+app = FastAPI()
 
-if __name__ == "__main__":
-    main()
+@app.get("/")
+def read_root():
+    return {"message": "Hello Radhyeee I Love You"}
