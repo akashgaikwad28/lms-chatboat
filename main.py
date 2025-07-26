@@ -11,19 +11,30 @@
 # ??????????????????????????????????????????????????
 
 
-# main.py
 from fastapi import FastAPI, Request
-from pydantic import BaseModel
-from agents.lms_agent import run_agent
-from config.settings import settings
+from chains.faq_chain import run_faq_chain
+from chains.course_recommender import run_course_recommender
+from agents.lms_agent import decide_and_route
+import uvicorn
 
 app = FastAPI()
 
-class ChatRequest(BaseModel):
-    query: str
-    user_id: str = None
+@app.get("/")
+def home():
+    return {"message": "LMS Chatbot is running 🚀"}
 
 @app.post("/chat")
-async def chat_with_bot(req: ChatRequest):
-    response = await run_agent(req.query, req.user_id)
-    return {"response": response}
+async def chat(request: Request):
+    body = await request.json()
+    query = body.get("query")
+
+    if not query:
+        return {"success": False, "error": "Query is missing."}
+
+    # Route to appropriate chain using agent
+    response = await decide_and_route(query)
+    return {"success": True, "response": response}
+
+
+if __name__ == "__main__":
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
