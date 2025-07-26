@@ -1,3 +1,93 @@
-{
-  "courses": []
-}
+[
+  {
+    "id": "course_001",
+    "title": "Introduction to Web Development",
+    "category": "Web Development",
+    "level": "Beginner",
+    "primaryLanguage": "English",
+    "description": "Learn the basics of HTML, CSS, and JavaScript to build your first website.",
+    "pricing": 0
+  },
+  {
+    "id": "course_002",
+    "title": "Advanced Python Programming",
+    "category": "Programming",
+    "level": "Advanced",
+    "primaryLanguage": "English",
+    "description": "Deep dive into Python’s advanced features including generators, decorators, and asynchronous programming.",
+    "pricing": 49.99
+  },
+  {
+    "id": "course_003",
+    "title": "Machine Learning with Python",
+    "category": "Data Science",
+    "level": "Intermediate",
+    "primaryLanguage": "English",
+    "description": "Hands-on course covering supervised and unsupervised ML techniques using Python and scikit-learn.",
+    "pricing": 99.99
+  },
+  {
+    "id": "course_004",
+    "title": "Frontend Development with React",
+    "category": "Web Development",
+    "level": "Intermediate",
+    "primaryLanguage": "English",
+    "description": "Build modern web interfaces with React, including hooks and component design.",
+    "pricing": 59.99
+  },
+  {
+    "id": "course_005",
+    "title": "AI for Everyone",
+    "category": "Artificial Intelligence",
+    "level": "Beginner",
+    "primaryLanguage": "Hindi",
+    "description": "An introductory course to AI concepts, tools, and real-world applications. No coding required.",
+    "pricing": 19.99
+  },
+  {
+    "id": "course_006",
+    "title": "Data Structures & Algorithms in Java",
+    "category": "Programming",
+    "level": "Intermediate",
+    "primaryLanguage": "English",
+    "description": "Master recursion, sorting, searching, and optimization techniques using Java.",
+    "pricing": 39.99
+  },
+  {
+    "id": "course_007",
+    "title": "Building REST APIs with Node.js",
+    "category": "Backend Development",
+    "level": "Intermediate",
+    "primaryLanguage": "English",
+    "description": "Learn Express, routing, middleware, and database connections to build robust backend APIs.",
+    "pricing": 29.99
+  },
+  {
+    "id": "course_008",
+    "title": "Deep Learning Fundamentals",
+    "category": "Artificial Intelligence",
+    "level": "Advanced",
+    "primaryLanguage": "English",
+    "description": "Train neural networks using TensorFlow and Keras, covering CNNs, RNNs, and LSTMs.",
+    "pricing": 119.99
+  },
+  {
+    "id": "course_009",
+    "title": "Introduction to Cybersecurity",
+    "category": "Security",
+    "level": "Beginner",
+    "primaryLanguage": "Hindi",
+    "description": "Understand digital threats, encryption, firewalls, and safe practices in Hindi for new learners.",
+    "pricing": 24.99
+  },
+  {
+    "id": "course_010",
+    "title": "Designing Dashboards with JavaScript",
+    "category": "Frontend Development",
+    "level": "Intermediate",
+    "primaryLanguage": "English",
+    "description": "Create interactive dashboards with charting libraries, DOM manipulation, and UI best practices.",
+    "pricing": 45.00
+  }
+]
+
