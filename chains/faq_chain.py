@@ -2,13 +2,16 @@
 
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_google_genai import ChatGoogleGenerativeAI
+from utils.llm_provider import get_llm
+from config.settings import settings
 import os
 
 # Load Gemini model
-llm = ChatGoogleGenerativeAI(
-    model="gemini-pro",
-    google_api_key=os.getenv("GEMINI_API_KEY")
-)
+
+
+llm = get_llm()
+
+
 
 # Prompt template for FAQ answering
 faq_prompt = ChatPromptTemplate.from_template("""

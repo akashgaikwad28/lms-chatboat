@@ -4,13 +4,14 @@
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_google_genai import ChatGoogleGenerativeAI
 from tools.lms_api_tool import get_all_courses_from_lms
+from config.settings import settings
+from utils.llm_provider import get_llm
 import os
 
 # Load Gemini LLM
-llm = ChatGoogleGenerativeAI(
-    model="gemini-pro",
-    google_api_key=os.getenv("GEMINI_API_KEY")
-)
+
+
+llm = get_llm()
 
 # Prompt template for course recommendation
 recommend_prompt = ChatPromptTemplate.from_template("""
