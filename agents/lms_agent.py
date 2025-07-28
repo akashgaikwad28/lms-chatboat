@@ -1,15 +1,10 @@
-
 from chains.course_recommender import run_course_recommender_chain
 from chains.faq_chain import run_faq_chain
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_google_genai import ChatGoogleGenerativeAI
-import os
 
-# Load Gemini LLM
-llm = ChatGoogleGenerativeAI(
-    model="gemini-pro",
-    google_api_key=os.getenv("GEMINI_API_KEY")
-)
+from utils.llm_provider import get_llm  # ✅ Use the helper
+
+llm = get_llm()  # ✅ Initialize correctly
 
 # Basic prompt to classify user intent
 intent_prompt = ChatPromptTemplate.from_template("""
@@ -43,4 +38,3 @@ async def run_agent(user_query: str, user_id: str = None) -> str:
     
     else:
         return "🤖 Sorry, I couldn’t understand your query. Please try asking about a course or an FAQ."
-

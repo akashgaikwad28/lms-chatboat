@@ -1,14 +1,14 @@
 # utils/llm_provider.py
 
 from langchain_google_genai import ChatGoogleGenerativeAI
+
 from config.settings import settings
 
-print("Using Google API key:", settings.GEMINI_API_KEY)
 
+print("Using Google API key:", settings.GOOGLE_API_KEY)
 
-
-def get_llm(model: str = "gemini-2.5-flash"):
+def get_llm():
     return ChatGoogleGenerativeAI(
-        model=model,
-        google_api_key=settings.GEMINI_API_KEY  # ✅ corrected here
+        model="gemini-pro",
+        google_api_key=settings.GOOGLE_API_KEY  
     )
