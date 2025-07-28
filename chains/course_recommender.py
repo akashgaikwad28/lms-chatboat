@@ -3,8 +3,8 @@
 
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_google_genai import ChatGoogleGenerativeAI
-from tools.lms_api_tool import get_all_courses_from_lms
-from config.settings import settings
+from tools.lms_api_tool import get_available_courses
+from config.settings import Settings
 from utils.llm_provider import get_llm
 import os
 
@@ -32,7 +32,7 @@ Your response:
 async def run_course_recommender_chain(user_query: str, user_id: str = None) -> str:
     try:
         # Get real-time courses from LMS API
-        course_data = await get_all_courses_from_lms()
+        course_data = await get_available_courses()
 
         # If LMS fails, fallback to dummy data
         if not course_data:

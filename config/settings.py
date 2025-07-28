@@ -1,12 +1,14 @@
-# Placeholder for settings.py
-# config/settings.py
-import os
-from dotenv import load_dotenv
+from pydantic_settings import BaseSettings
+from pydantic import Field
 
-load_dotenv()
+class Settings(BaseSettings):
+    GEMINI_API_KEY: str = Field(..., alias="GEMINI API KEY")
+    LMS_API_BASE_URL: str = Field(..., alias="LMS API BASE URL")
 
-class Settings:
-    GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-    LMS_API_BASE_URL = os.getenv("LMS_API_BASE_URL")
+    class Config:
+        env_file = ".env"
+        populate_by_name = True
+
+
 
 settings = Settings()
