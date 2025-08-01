@@ -1,61 +1,52 @@
-
 # chains/course_recommender.py
 
+import logging
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_google_genai import ChatGoogleGenerativeAI
-from tools.lms_api_tool import get_available_courses
-from config.settings import Settings
 from utils.llm_provider import get_llm
-import os
+from utils.course_data_loader import load_course_data
 
-# Load Gemini LLM
+# Setup logger
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
-
+# Load LLM
 llm = get_llm()
 
-# Prompt template for course recommendation
-recommend_prompt = ChatPromptTemplate.from_template("""
-You are a helpful assistant at an online learning platform.
+# Load course recommendation prompt from external file
+with open("prompts/course_recommendation_prompt.txt", "r", encoding="utf-8") as f:
+    prompt_template_str = f.read()
 
-Based on the student's interests and background described below, suggest 3 relevant courses. Be short and clear.
-
-Student query: "{user_query}"
-
-Here are the available courses:
-{course_data}
-
-Your response:
-- List only 3 best-fit courses with name and short reason why each fits.
-- Format it clearly.
-""")
+# ChatPromptTemplate using loaded prompt
+recommend_prompt = ChatPromptTemplate.from_template(prompt_template_str)
 
 async def run_course_recommender_chain(user_query: str, user_id: str = None) -> str:
     try:
-        # Get real-time courses from LMS API
-        course_data = await get_available_courses()
+        logger.info(f"[User Query] {user_query}")
 
-        # If LMS fails, fallback to dummy data
+        # Step 1: Load course data from LMS API or fallback
+        course_data = load_course_data()
+
         if not course_data:
-            course_data = [
-                {"title": "Python for Beginners", "category": "Programming", "level": "Beginner"},
-                {"title": "ReactJS Web Development", "category": "Web Dev", "level": "Intermediate"},
-                {"title": "AI Fundamentals", "category": "AI", "level": "Beginner"},
-            ]
+            logger.warning("No course data found from LMS or fallback.")
+            return "⚠️ No courses are available at the moment. Please check back later."
 
-        # Convert to readable string for LLM
+        # Step 2: Format course list into string for prompt
         course_text = "\n".join([
-            f"- {course['title']} | {course.get('category', '')} | {course.get('level', '')}"
+            f"- {course['title']} | {course.get('category', 'Unknown')} | {course.get('level', 'Unknown')}"
             for course in course_data
         ])
+        logger.info(f"[Formatted Courses] {course_text}")
 
+        # Step 3: Chain prompt + LLM
         chain = recommend_prompt | llm
         response = await chain.ainvoke({
             "user_query": user_query,
             "course_data": course_text
         })
 
+        logger.info(f"[LLM Recommendation Response] {response.content}")
         return response.content.strip()
 
     except Exception as e:
-        print("Error in course recommender:", e)
+        logger.error(f"Error in course recommender: {e}", exc_info=True)
         return "⚠️ Sorry, I'm unable to recommend courses at the moment. Please try again later."
