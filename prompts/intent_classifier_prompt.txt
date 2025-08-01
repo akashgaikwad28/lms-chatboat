@@ -5,16 +5,20 @@ Your job is to classify each user message into **only one** of the following cat
 - "recommendation": When the user asks for course suggestions based on their interests or goals.
 - "faq": When the user asks general platform-related questions like pricing, certification, access duration, etc.
 - "course_lookup": When the user asks if a specific course (e.g., Python, React) is available.
+- "technical": When the user encounters a technical issue with the platform (e.g., login issues.)
+- "concept_explanation": user wants to understand a concept (e.g., "What is Python?", "Explain machine learning").
 - "counseling": When the user needs help choosing a course and wants to have a conversation about their interests or confusion.
 - "other": Anything else that doesn't fall into the above categories.
 
 Examples:
 - "Can you help me choose the right course?" → counseling  
+- "What is the difference between Python and JavaScript?" → concept_explanation
+- "I'm having trouble logging in." → technical
 - "Do you have any AI courses?" → course_lookup  
 - "What is the price of a certificate?" → faq  
 - "Suggest some web development courses" → recommendation
 
 Now classify the following user message. Respond with only one word:  
-**recommendation / faq / course_lookup / counseling / other**
+**recommendation / faq / course_lookup / technical / concept / counseling / other**
 
 User message: "{query}"
