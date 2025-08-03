@@ -20,7 +20,7 @@ llm = get_llm()
 intent_prompt = load_prompt_template(f"{PROMPT_DIR}/intent_classifier_prompt.txt")
 
 
-# 🔍 Intent Classifier
+#  Intent Classifier
 async def classify_intent(user_query: str) -> str:
     """Classify the user query into one of the defined intents."""
     try:
@@ -33,8 +33,8 @@ async def classify_intent(user_query: str) -> str:
         return "other"
 
 
-# 🤖 Agent Router
-async def run_agent(user_query: str, user_id: str = None) -> str:
+
+async def run_agent(user_query: str, user_id: str = None, user_name: str = None) -> str:
     """Route user query based on classified intent to the appropriate handler."""
     intent = await classify_intent(user_query)
     logger.info(f"Classified Intent: {intent} | Query: {user_query}")
@@ -64,6 +64,17 @@ async def run_agent(user_query: str, user_id: str = None) -> str:
             response = await run_concept_explainer_chain(user_query)
             logger.info(f"Concept Explanation Response: {response}")
             return response
+        
+        
+        elif intent == "greeting":
+             return (
+                "👋 Hello Learner ! I'm your Acash Tech Assistant.\n"
+                "I can help you with course recommendations, pricing, and more.\n"
+                "Try asking something like:\n"
+                "• What courses are available for Python?\n"
+                "• Can you help me choose a course?\n"
+                "• What's the price of the AI course?\n"
+            )
 
         else:
             logger.warning(f"Unknown Intent: {intent} | Query: {user_query}")
