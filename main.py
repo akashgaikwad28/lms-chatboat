@@ -22,7 +22,7 @@ app = FastAPI()
 # CORS middleware for frontend access
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Set to specific frontend domain in production
+    allow_origins=["*"],  
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -30,23 +30,23 @@ app.add_middleware(
 
 @app.get("/")
 def home():
-    return {"message": "LMS Chatbot is running 🚀"}
+    return {"message": "LMS Chatbot is running "}
 
 @app.post("/chat")
 async def chat(request: Request):
     try:
         body = await request.json()
         user_query = body.get("user_query")
-        user_id = body.get("user_id")  # Optional field
+        user_id = body.get("user_id")
+        user_name = body.get("user_name")
 
-        logger.info(f"Received chat request: query='{user_query}', user_id='{user_id}'")
+        logger.info(f"Received chat request: query='{user_query}', user_id='{user_id}', user_name='{user_name}'")
 
         if not user_query:
             logger.warning("Query missing in request body.")
             return {"success": False, "error": "Query is missing."}
 
-        # Call the chatbot agent
-        response = await run_agent(user_query, user_id)
+        response = await run_agent(user_query, user_id=user_id, user_name=user_name)
 
         logger.info(f"Response generated: {response}")
         return {"success": True, "response": response}
