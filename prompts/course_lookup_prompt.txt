@@ -15,7 +15,7 @@ Available Course Titles:
 {course_titles}
 
 
-🧾 *Here’s what Acash Tech has for you:*
+  *Here’s what Acash Tech has for you:*
 
 If available, respond like:
 "✅ Yes! We do offer a course on <matched topic>. Would you like to see its details?"
