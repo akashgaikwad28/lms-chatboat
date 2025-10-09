@@ -1,18 +1,11 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from agents.lms_agent import run_agent
+from utils.logger import get_logger
 import uvicorn
-import logging
+import traceback
 
-# -----------------------------
-# Logging configuration
-# -----------------------------
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s"
-)
-
-logger = logging.getLogger(__name__)
+logger = get_logger(name="main")
 
 # -----------------------------
 # FastAPI app initialization
@@ -30,7 +23,8 @@ app.add_middleware(
 
 @app.get("/")
 def home():
-    return {"message": "LMS Chatbot is running "}
+    logger.info("Health check hit at '/' endpoint.")
+    return {"message": "LMS Chatbot is running"}
 
 @app.post("/chat")
 async def chat(request: Request):
@@ -40,23 +34,33 @@ async def chat(request: Request):
         user_id = body.get("user_id")
         user_name = body.get("user_name")
 
-        logger.info(f"Received chat request: query='{user_query}', user_id='{user_id}', user_name='{user_name}'")
+        logger.info(f"[Chat Request] query='{user_query}', user_id='{user_id}', user_name='{user_name}'")
 
         if not user_query:
-            logger.warning("Query missing in request body.")
+            logger.warning("[Chat Request] Missing 'user_query' in request body.")
             return {"success": False, "error": "Query is missing."}
 
         response = await run_agent(user_query, user_id=user_id, user_name=user_name)
 
-        logger.info(f"Response generated: {response}")
+        logger.info(f"[Chat Response] {response}")
         return {"success": True, "response": response}
 
     except Exception as e:
-        logger.error(f"Error processing /chat request: {e}", exc_info=True)
-        return {"success": False, "error": str(e)}
+        tb = traceback.extract_tb(e.__traceback__)[-1]
+        logger.error(
+            f"\n--- Exception in /chat endpoint ---\n"
+            f"File      : {tb.filename}\n"
+            f"Function  : {tb.name}\n"
+            f"Line No   : {tb.lineno}\n"
+            f"Error     : {type(e).__name__} - {str(e)}\n"
+            f"------------------------------------"
+        )
+        logger.debug("Full Traceback:\n" + "".join(traceback.format_exception(type(e), e, e.__traceback__)))
+        return {"success": False, "error": "Internal Server Error"}
 
 @app.get("/health")
 def health_check():
+    logger.info("Health check hit at '/health' endpoint.")
     return {"status": "ok"}
 
 if __name__ == "__main__":
