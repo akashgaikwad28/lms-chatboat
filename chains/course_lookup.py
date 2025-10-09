@@ -1,25 +1,15 @@
 from utils.course_data_loader import load_course_data
-from langchain_core.prompts import ChatPromptTemplate
 from utils.llm_provider import get_llm
+from utils.prompt_loader import load_prompt_template
 from utils.logger import get_logger
 import traceback
 
 logger = get_logger(name="course_lookup_chain")
 llm = get_llm()
 
-course_lookup_prompt = ChatPromptTemplate.from_template("""
-You are a helpful assistant at an online learning platform.
 
-User query: {user_query}
-
-Here are some available courses:
-{available_courses}
-
-Instructions:
-- If a relevant course is found, return its name and price.
-- If not, say: "❌ No matching course found."
-- Be concise and helpful.
-""")
+PROMPT_PATH = "prompts/course_lookup_prompt.txt"
+course_lookup_prompt = load_prompt_template(PROMPT_PATH)
 
 async def run_course_lookup_chain(user_query: str) -> str:
     try:

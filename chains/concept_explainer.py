@@ -1,28 +1,22 @@
-from langchain_core.prompts import ChatPromptTemplate
 from utils.llm_provider import get_llm
+from utils.prompt_loader import load_prompt_template
 from utils.logger import get_logger
 import traceback
 
-logger = get_logger(name="concept_explainer")
+logger = get_logger(name="concept_explainer_chain")
 
 llm = get_llm()
 
-explain_prompt = ChatPromptTemplate.from_template("""
-You are a knowledgeable and beginner-friendly assistant.
 
-Please explain the following concept clearly, with examples if appropriate:
-
-Concept: "{user_query}"
-
-Explanation:
-""")
+PROMPT_PATH = "prompts/concept_explainer_prompt.txt"
+explain_prompt = load_prompt_template(PROMPT_PATH)
 
 async def run_concept_explainer_chain(user_query: str) -> str:
     try:
         logger.info(f"[Concept Explanation] Query: {user_query}")
         chain = explain_prompt | llm
         response = await chain.ainvoke({"user_query": user_query})
-        logger.info(f"[Concept Explanation] Response generated successfully.")
+        logger.info("[Concept Explanation] Response generated successfully.")
         return response.content.strip()
 
     except Exception as e:
