@@ -1,11 +1,10 @@
-# # utils/course_data_loader.py
-
 import os
 import json
-import logging
 import requests
+import traceback
+from utils.logger import get_logger
 
-logger = logging.getLogger(__name__)
+logger = get_logger(name="lms_api_tool")
 
 LMS_BASE_URL = os.getenv("LMS_API_BASE_URL", "http://localhost:5000")  # Default to local LMS
 
@@ -15,53 +14,39 @@ def load_course_data() -> list:
     Fallback to empty list if request fails or LMS is down.
     """
     try:
+        logger.info(f"Fetching course data from {LMS_BASE_URL}/student/course/get")
         response = requests.get(f"{LMS_BASE_URL}/student/course/get", timeout=5)
-        response.raise_for_status()  # Raise HTTPError for bad status codes
-
+        response.raise_for_status()
         data = response.json()
 
         if data.get("success") and "data" in data:
+            logger.info(f"Successfully loaded {len(data['data'])} courses from LMS API.")
             return data["data"]
         else:
             logger.warning("LMS API response received but marked unsuccessful.")
             return []
 
     except requests.RequestException as e:
-        logger.error(f"Failed to load courses from LMS: {e}")
+        tb = traceback.extract_tb(e.__traceback__)[-1]
+        log_message = (
+            f"\n--- LMS API Exception ---\n"
+            f"File          : {tb.filename}\n"
+            f"Function      : {tb.name}\n"
+            f"Line No       : {tb.lineno}\n"
+            f"Error Type    : {type(e).__name__}\n"
+            f"Error Message : {str(e)}\n"
+            f"--------------------------\n"
+        )
+        logger.error(log_message)
+        logger.debug("Full Traceback:\n" + "".join(traceback.format_exception(type(e), e, e.__traceback__)))
         return []
 
-
-
-
-
-
-
-
-
-''''code for local testing purposes only, not used in production'''
-
-
-
-# import os
-# import json
-# import logging
-
-# logging.basicConfig(level=logging.INFO)
-# logger = logging.getLogger(__name__)
 
 # SAMPLE_JSON_PATH = os.path.join("data", "sample_courses.json")
 
 # def load_course_data(json_path: str = SAMPLE_JSON_PATH) -> list:
-#     """
-#     Load course data from a local JSON file for testing purposes.
-    
-#     Args:
-#         json_path (str): Path to the local course data JSON file.
-    
-#     Returns:
-#         list: A list of course dictionaries.
-#     """
 #     try:
+#         logger.info(f"Loading course data from local file: {json_path}")
 #         if not os.path.exists(json_path):
 #             logger.error(f"File not found: {json_path}")
 #             return []
@@ -70,12 +55,23 @@ def load_course_data() -> list:
 #             data = json.load(f)
 
 #         if not isinstance(data, list):
-#             logger.warning(f"Invalid data format in {json_path}. Expected a list of courses.")
+#             logger.warning(f"Invalid data format in {json_path}. Expected a list.")
 #             return []
 
 #         logger.info(f"Loaded {len(data)} courses from local test file.")
 #         return data
 
 #     except Exception as e:
-#         logger.exception(f"Failed to load course data from {json_path}")
+#         tb = traceback.extract_tb(e.__traceback__)[-1]
+#         log_message = (
+#             f"\n--- Local JSON Exception ---\n"
+#             f"File          : {tb.filename}\n"
+#             f"Function      : {tb.name}\n"
+#             f"Line No       : {tb.lineno}\n"
+#             f"Error Type    : {type(e).__name__}\n"
+#             f"Error Message : {str(e)}\n"
+#             f"-----------------------------\n"
+#         )
+#         logger.error(log_message)
+#         logger.debug("Full Traceback:\n" + "".join(traceback.format_exception(type(e), e, e.__traceback__)))
 #         return []

@@ -1,15 +1,14 @@
-# utils/llm_provider.py
-
-# from langchain_google_genai import ChatGoogleGenerativeAI
-
-from langchain_groq import ChatGroq
-
+import os
 from config.settings import settings
+from langchain_groq import ChatGroq
+# from langchain_google_genai import ChatGoogleGenerativeAI
+from utils.logger import get_logger
 
+logger = get_logger(name="llm_provider")
 
-# print("Using Google API key:", settings.GOOGLE_API_KEY)
-
+# Uncomment if using Gemini
 # def get_llm():
+#     logger.info("Initializing Gemini LLM (gemini-pro)")
 #     return ChatGoogleGenerativeAI(
 #         model="gemini-pro",
 #         google_api_key=settings.GOOGLE_API_KEY,
@@ -17,12 +16,17 @@ from config.settings import settings
 #         max_output_tokens=512,
 #     )
 
-
-
 def get_llm():
-    return ChatGroq(
-        groq_api_key=settings.GROQ_API_KEY,
-        model_name="llama3-70b-8192" ,
-        temperature=0.01,
-        max_tokens=512  
-    )
+    logger.info("Initializing Groq LLM (llama3-70b-8192)")
+    try:
+        llm = ChatGroq(
+            groq_api_key=settings.GROQ_API_KEY,
+            model_name="llama3-70b-8192",
+            temperature=0.01,
+            max_tokens=512
+        )
+        logger.info("Groq LLM initialized successfully.")
+        return llm
+    except Exception as e:
+        logger.exception(f"Failed to initialize Groq LLM: {e}")
+        raise

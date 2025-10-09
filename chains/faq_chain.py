@@ -1,19 +1,11 @@
-# chains/faq_chain.py
-
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_google_genai import ChatGoogleGenerativeAI
 from utils.llm_provider import get_llm
-from config.settings import settings
-import os
+from utils.logger import get_logger
+import traceback
 
-# Load Gemini model
-
-
+logger = get_logger(name="faq_chain")
 llm = get_llm()
 
-
-
-# Prompt template for FAQ answering
 faq_prompt = ChatPromptTemplate.from_template("""
 You are a support assistant for **Acash Tech**, an online LMS platform. Answer user questions clearly and in a friendly tone.
 
@@ -37,12 +29,23 @@ Give a helpful, student-friendly response.
 
 async def run_faq_chain(user_question: str) -> str:
     try:
+        logger.info(f"[FAQ Chain] Received question: {user_question}")
         chain = faq_prompt | llm
         response = await chain.ainvoke({
             "user_question": user_question
         })
-
+        logger.info("[FAQ Chain] Response generated successfully.")
         return response.content.strip()
+
     except Exception as e:
-        print("FAQ Chain Error:", e)
+        tb = traceback.extract_tb(e.__traceback__)[-1]
+        logger.error(
+            f"\n--- Exception in run_faq_chain ---\n"
+            f"File      : {tb.filename}\n"
+            f"Function  : {tb.name}\n"
+            f"Line No   : {tb.lineno}\n"
+            f"Error     : {type(e).__name__} - {str(e)}\n"
+            f"-----------------------------------"
+        )
+        logger.debug("Full Traceback:\n" + "".join(traceback.format_exception(type(e), e, e.__traceback__)))
         return "⚠️ Sorry, I'm having trouble answering that right now. Please try again later."

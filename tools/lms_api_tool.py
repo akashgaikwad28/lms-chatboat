@@ -1,26 +1,18 @@
-# tools/lms_api_tool.py
-
 import os
-import logging
-import requests
-from langchain.tools import tool
 import json
+import requests
+import traceback
+from langchain.tools import tool
+from utils.logger import get_logger
 
+logger = get_logger(name="lms_api_tool")
 
-## for testing 
-SAMPLE_COURSES_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "sample_courses.json") 
-
-# Setup logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
-
+SAMPLE_COURSES_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "sample_courses.json")
 LMS_BASE_URL = os.getenv("LMS_API_BASE_URL")
 
 @tool
 def get_available_courses() -> str:
     """Fetch a list of available courses from the LMS."""
-    
-    
     try:
         if not LMS_BASE_URL:
             logger.error("LMS_API_BASE_URL is not set.")
@@ -51,11 +43,29 @@ def get_available_courses() -> str:
         return result
 
     except requests.exceptions.RequestException as e:
-        logger.error(f"Request error when fetching courses: {e}", exc_info=True)
+        tb = traceback.extract_tb(e.__traceback__)[-1]
+        logger.error(
+            f"\n--- RequestException in get_available_courses ---\n"
+            f"File      : {tb.filename}\n"
+            f"Function  : {tb.name}\n"
+            f"Line No   : {tb.lineno}\n"
+            f"Error     : {type(e).__name__} - {str(e)}\n"
+            f"-----------------------------------------------"
+        )
+        logger.debug("Full Traceback:\n" + "".join(traceback.format_exception(type(e), e, e.__traceback__)))
         return "⚠️ Unable to fetch courses right now."
 
     except Exception as e:
-        logger.error(f"Unexpected error in get_available_courses: {e}", exc_info=True)
+        tb = traceback.extract_tb(e.__traceback__)[-1]
+        logger.error(
+            f"\n--- Exception in get_available_courses ---\n"
+            f"File      : {tb.filename}\n"
+            f"Function  : {tb.name}\n"
+            f"Line No   : {tb.lineno}\n"
+            f"Error     : {type(e).__name__} - {str(e)}\n"
+            f"-------------------------------------------"
+        )
+        logger.debug("Full Traceback:\n" + "".join(traceback.format_exception(type(e), e, e.__traceback__)))
         return "⚠️ Something went wrong while fetching courses."
 
 @tool
@@ -90,30 +100,27 @@ def get_course_details(course_id: str) -> str:
         return formatted
 
     except requests.exceptions.RequestException as e:
-        logger.error(f"Request error when fetching course details: {e}", exc_info=True)
+        tb = traceback.extract_tb(e.__traceback__)[-1]
+        logger.error(
+            f"\n--- RequestException in get_course_details ---\n"
+            f"File      : {tb.filename}\n"
+            f"Function  : {tb.name}\n"
+            f"Line No   : {tb.lineno}\n"
+            f"Error     : {type(e).__name__} - {str(e)}\n"
+            f"----------------------------------------------"
+        )
+        logger.debug("Full Traceback:\n" + "".join(traceback.format_exception(type(e), e, e.__traceback__)))
         return "⚠️ Failed to fetch course details."
 
     except Exception as e:
-        logger.error(f"Unexpected error in get_course_details: {e}", exc_info=True)
+        tb = traceback.extract_tb(e.__traceback__)[-1]
+        logger.error(
+            f"\n--- Exception in get_course_details ---\n"
+            f"File      : {tb.filename}\n"
+            f"Function  : {tb.name}\n"
+            f"Line No   : {tb.lineno}\n"
+            f"Error     : {type(e).__name__} - {str(e)}\n"
+            f"------------------------------------------"
+        )
+        logger.debug("Full Traceback:\n" + "".join(traceback.format_exception(type(e), e, e.__traceback__)))
         return "⚠️ An error occurred while retrieving course details."
-
-
-
-
-# tools/lms_api_tool.py
-
-# import json
-# import logging
-
-# async def get_available_courses(tool_input: str = "") -> list:
-#     """Fetch available courses from local JSON dummy data."""
-#     try:
-#         file_path = "data/sample_courses.json"
-#         with open(file_path, "r") as file:
-#             courses = json.load(file)
-#         logging.info("✅ Loaded courses from local file.")
-#         return courses
-
-#     except Exception as e:
-#         logging.error(f"❌ Failed to load course data: {e}")
-#         return []
